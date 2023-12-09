@@ -138,47 +138,10 @@ class PaymentsJournal:
 
         while True:
             self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight)")
-
             self.logger.debug('Загрузка списка элементов...')
             doc_table = self.driver.find_element(By.CLASS_NAME, 'jeg_content').find_elements(By.CLASS_NAME,
                                                                                                    'container')
             self.logger.debug('Обработка списка элементов...')
-
-            while True:
-                self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight)")
-                try:
-                    # Get scroll height
-                    last_height = self.driver.execute_script("return document.body.scrollHeight")
-
-                    while True:
-                        # Scroll down to bottom
-                        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
-                        # Wait to load page
-                        time.sleep(0.5)
-
-                        # Calculate new scroll height and compare with last scroll height
-                        new_height = self.driver.execute_script("return document.body.scrollHeight")
-                        if new_height == last_height:
-                            break
-                        last_height = new_height
-
-                        try:
-                            reg_btn = self.driver.find_element(By.CLASS_NAME, 'dialog-widget-content').find_element(
-                                By.XPATH,
-                                '//*[@id="elementor-popup-modal-433761"]/div/a')
-                            reg_btn.click()
-                            self.logger.info('Окно регистрации убрано')
-                        except:
-                            self.logger.exception('Не найдено окно регистрации')
-                            pass
-
-                        self.logger.info('Прекращен поиск окна регистрации')
-                        time.sleep(3)
-
-                except Exception as e:
-                    self.logger.exception('Не удалось найти scroll')
-                    break
 
             # Цикл по всем строкам таблицы элементов на текущей странице
             for element in doc_table:
@@ -258,7 +221,39 @@ class PaymentsJournal:
                     load_date=None,
                 ))
 
+            try:
+            # Get scroll height
+                last_height = self.driver.execute_script("return document.body.scrollHeight")
 
+                while True:
+            # Scroll down to bottom
+                    self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+            # Wait to load page
+                    time.sleep(0.5)
+
+            #Calculate new scroll height and compare with last scroll height
+                    new_height = self.driver.execute_script("return document.body.scrollHeight")
+                    if new_height == last_height:
+                        break
+                    last_height = new_height
+
+                    try:
+                        reg_btn = self.driver.find_element(By.CLASS_NAME, 'dialog-widget-content').find_element(
+                            By.XPATH,
+                            '//*[@id="elementor-popup-modal-433761"]/div/a')
+                        reg_btn.click()
+                        self.logger.info('Окно регистрации убрано')
+                    except:
+                        self.logger.exception('Не найдено окно регистрации')
+                        pass
+
+                    self.logger.info('Прекращен поиск окна регистрации')
+                    time.sleep(3)
+
+            except Exception as e:
+                self.logger.exception('Не удалось найти scroll')
+                break
 
             #try:
             #    pagination_arrow = self.driver.find_element(By.XPATH, '//a[contains(@data-direction,\'next\')]')
